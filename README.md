@@ -32,4 +32,5 @@ El objetivo es coordinar una flota de U-Boats para interceptar y hundir un cargu
 - Estudiar si el control centralizado es más eficiente que el aprendizaje multiagente independiente en escenarios de coordinación naval
 - Explorar diferentes arquitecturas de red neuronal para el comandante (CNN + MLP, Transformer, etc.)
 - Experimentar con recompensas densas vs. sparse, currículum learning y diferentes niveles de observabilidad parcial
+- hello
 
