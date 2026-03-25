@@ -210,3 +210,4 @@ if __name__ == "__main__":
     print(f"Episodio finalizado en {step_count} pasos.")
     print(f"Recompensa total: {total_reward}")
     env.close()
+    
