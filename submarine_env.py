@@ -12,19 +12,14 @@ class SubmarineBattleEnv(gym.Env):
 
     metadata = {"render_modes": ["human"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, grid_size: int = 30):
+    def __init__(self, render_mode=None, grid_size: int = 10):  # <-- 30 → 10
         super().__init__()
         self.grid_size = int(grid_size)
         self.render_mode = render_mode
 
-        # Para mantener una escala “similar” al cambiar el tamaño del grid,
-        # la penalización por paso se ajusta para que el total antes de llegar al
-        # borde (grid_size-1 pasos) mantenga aproximadamente la misma magnitud
-        # que en el caso de referencia 10x10 (donde eran 9 pasos).
-        reference_grid_size = 10
-        reference_span = reference_grid_size - 1
-        current_span = max(self.grid_size - 1, 1)
-        self.step_penalty = -1.0 * (reference_span / current_span)
+        # Penalización fija por paso (ya no hace falta escalar porque el grid
+        # de referencia y el actual coinciden en el valor por defecto).
+        self.step_penalty = -1.0
 
         # 2 submarinos, cada uno con 5 acciones:
         # 0=arriba, 1=abajo, 2=izquierda, 3=derecha, 4=quieto
@@ -100,9 +95,9 @@ class SubmarineBattleEnv(gym.Env):
         self._clip_position(self.destroyer)
 
     def reset(self, *, seed=None, options=None):
-        """no a posiciones fijas iniciales.
-        - Submarinos
-        Reinicia el entor: abajo a la izquierda
+        """
+        Reinicia el entorno a posiciones fijas iniciales.
+        - Submarinos: abajo a la izquierda
         - Carguero: arriba a la izquierda
         - Destructor: cerca del carguero
         """
@@ -130,7 +125,7 @@ class SubmarineBattleEnv(gym.Env):
         3) Mueve destructor hacia submarino más cercano
         4) Evalúa recompensas y terminación
         """
-        # Penalización base por paso para incentivar rapidez (escalada con grid).
+        # Penalización base por paso para incentivar rapidez.
         reward = self.step_penalty
         terminated = False
         truncated = False
@@ -173,7 +168,6 @@ class SubmarineBattleEnv(gym.Env):
         grid = [["." for _ in range(self.grid_size)] for _ in range(self.grid_size)]
 
         # Colocar entidades en el grid.
-        # Si dos entidades coinciden, la última escritura puede sobrescribir la anterior.
         grid[self.cargo[1]][self.cargo[0]] = "C"
         grid[self.destroyer[1]][self.destroyer[0]] = "D"
         grid[self.sub1[1]][self.sub1[0]] = "U"
